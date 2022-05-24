@@ -1,6 +1,7 @@
 import 'package:carplate/screens/issueNewPCN.dart';
 import 'package:carplate/screens/pastPCN.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class OptionPage extends StatefulWidget {
   OptionPage({Key? key}) : super(key: key);
@@ -10,6 +11,9 @@ class OptionPage extends StatefulWidget {
 }
 
 class _OptionPageState extends State<OptionPage> {
+  List<XFile>? _imageFileList;
+  final ImagePicker _picker = ImagePicker();
+  bool isVideo = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
