@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:carplate/screens/enterManually.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class IssueNewPCN extends StatefulWidget {
   IssueNewPCN({Key? key}) : super(key: key);
@@ -30,23 +31,25 @@ class _IssueNewPCNState extends State<IssueNewPCN> {
 
   void _onImageButtonPressed(ImageSource source,
       {BuildContext? context, bool isMultiImage = false}) async {
-    try {
-      final pickedFile = await _picker.pickImage(
-        source: source,
-        maxWidth: 1000,
-        maxHeight: 1000,
-        imageQuality: 100,
-      );
-      setState(() {
-        _imageFile = pickedFile;
-      });
-      print(_imageFile!.path);
-      File file = File(_imageFile!.path);
-      print(file.path);
-    } catch (e) {
-      setState(() {
-        // _pickImageError = e;
-      });
+    if (await Permission.camera.request().isGranted) {
+      try {
+        final pickedFile = await _picker.pickImage(
+          source: source,
+          maxWidth: 1000,
+          maxHeight: 1000,
+          imageQuality: 100,
+        );
+        setState(() {
+          _imageFile = pickedFile;
+        });
+        print(_imageFile!.path);
+        File file = File(_imageFile!.path);
+        print(file.path);
+      } catch (e) {
+        setState(() {
+          // _pickImageError = e;
+        });
+      }
     }
   }
 
