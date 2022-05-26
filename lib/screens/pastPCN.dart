@@ -1,3 +1,5 @@
+import 'package:carplate/models/pcnSummary.dart';
+import 'package:carplate/utils/http-client.dart';
 import 'package:flutter/material.dart';
 
 class PastPCN extends StatefulWidget {
@@ -8,6 +10,21 @@ class PastPCN extends StatefulWidget {
 }
 
 class _PastPCNState extends State<PastPCN> {
+  List<PCNSummary> pcnSummary = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    getPastPCNSummary();
+    super.initState();
+  }
+
+  void getPastPCNSummary() async {
+    dynamic data = await HttpClients().getPCNSummary();
+    setState(() {
+      pcnSummary = data;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,15 +49,24 @@ class _PastPCNState extends State<PastPCN> {
       ),
       body: Container(
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              PastCard(),
-              PastCard(),
-              PastCard(),
-              PastCard(),
-              PastCard(),
-            ],
-          ),
+          child: ListView.builder(
+              itemCount: pcnSummary.length,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              padding: EdgeInsets.symmetric(
+                horizontal: 10,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return Column(
+                  children: [
+                    PastCard(
+                      dateOfCreation: pcnSummary[index].dateOfCreation,
+                      location:
+                          pcnSummary[index].carDetails![index].carLocation,
+                    ),
+                  ],
+                );
+              }),
         ),
         alignment: Alignment.center,
         height: MediaQuery.of(context).size.height,
@@ -59,11 +85,20 @@ class _PastPCNState extends State<PastPCN> {
   }
 }
 
-class PastCard extends StatelessWidget {
+class PastCard extends StatefulWidget {
+  final String dateOfCreation;
+  final String location;
   const PastCard({
     Key? key,
+    this.dateOfCreation = "",
+    this.location = "",
   }) : super(key: key);
 
+  @override
+  State<PastCard> createState() => _PastCardState();
+}
+
+class _PastCardState extends State<PastCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -71,8 +106,8 @@ class PastCard extends StatelessWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("28/12/1998"),
-            Text("Mumbai"),
+            Text(widget.dateOfCreation),
+            Text(widget.location),
           ],
         ),
       ),

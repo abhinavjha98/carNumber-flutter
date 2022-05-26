@@ -9,6 +9,21 @@ class EnterManually extends StatefulWidget {
 }
 
 class _EnterManuallyState extends State<EnterManually> {
+  FocusNode numberPlateFocusNode = new FocusNode();
+  TextEditingController numberPlateController = new TextEditingController();
+  FocusNode carModelFocusNode = new FocusNode();
+  TextEditingController carModelController = new TextEditingController();
+  FocusNode carColorFocusNode = new FocusNode();
+  TextEditingController carColorController = new TextEditingController();
+  FocusNode carLocationNode = new FocusNode();
+  TextEditingController carLocationController = new TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +64,9 @@ class _EnterManuallyState extends State<EnterManually> {
             children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: const TextField(
+                child: TextFormField(
+                  focusNode: numberPlateFocusNode,
+                  controller: numberPlateController,
                   decoration: InputDecoration(
                       labelText: "Number Plate",
                       border: OutlineInputBorder(
@@ -59,7 +76,9 @@ class _EnterManuallyState extends State<EnterManually> {
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: const TextField(
+                child: TextFormField(
+                  focusNode: carModelFocusNode,
+                  controller: carModelController,
                   decoration: InputDecoration(
                       labelText: "Car Model",
                       border: OutlineInputBorder(
@@ -69,7 +88,9 @@ class _EnterManuallyState extends State<EnterManually> {
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: const TextField(
+                child: TextFormField(
+                  focusNode: carColorFocusNode,
+                  controller: carColorController,
                   decoration: InputDecoration(
                       labelText: "Car Colour",
                       border: OutlineInputBorder(
@@ -79,7 +100,9 @@ class _EnterManuallyState extends State<EnterManually> {
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: const TextField(
+                child: TextFormField(
+                  focusNode: carLocationNode,
+                  controller: carLocationController,
                   decoration: InputDecoration(
                       labelText: "Car Location",
                       border: OutlineInputBorder(
@@ -124,7 +147,13 @@ class _EnterManuallyState extends State<EnterManually> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PCNCode()),
+                        MaterialPageRoute(
+                            builder: (context) => PCNCode(
+                                  numberPlate: numberPlateController.text,
+                                  carModel: carModelController.text,
+                                  carLocation: carLocationController.text,
+                                  carColor: carColorController.text,
+                                )),
                       );
                     },
                     child: Container(

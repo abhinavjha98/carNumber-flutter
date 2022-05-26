@@ -35,8 +35,31 @@ class _LoginPageState extends State<LoginPage> {
           context,
           MaterialPageRoute(builder: (context) => OptionPage()),
         );
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        showMessage(context, status["message"]);
       }
     }
+  }
+
+  void showMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Text(
+              message,
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                    color: Colors.white,
+                  ),
+              overflow: TextOverflow.ellipsis,
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -158,12 +181,12 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // checkLogin();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => OptionPage()),
-                          );
+                          checkLogin();
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (context) => OptionPage()),
+                          // );
                         },
                         child: Container(
                           margin: EdgeInsets.symmetric(

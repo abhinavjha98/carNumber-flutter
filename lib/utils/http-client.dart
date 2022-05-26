@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:carplate/models/pcnCode.dart';
+import 'package:carplate/models/pcnSummary.dart';
 import 'package:carplate/utils/debug.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -65,5 +67,49 @@ class HttpClients extends ChangeNotifier {
     return Future.value(datas);
   }
 
-  
+  Future<List<PCNSummary>> getPCNSummary() async {
+    var _token = await storage.read(key: 'token_access');
+    var headers = {
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer ' + _token.toString(),
+    };
+    var data = {};
+    Uri uri = Uri.parse(baseURL + 'pcn/summary/');
+    var res = await http.get(uri, headers: headers);
+
+    print(res.body);
+    var respData = json.decode(utf8.decode(res.bodyBytes));
+    dynamic datas = respData;
+
+    List<dynamic> responseData = respData['data'];
+    List<PCNSummary> productInfo = responseData
+        .map((e) => PCNSummary.fromMap(e))
+        .where((element) => element != null)
+        .toList();
+    print(productInfo);
+    return Future.value(productInfo);
+  }
+
+  Future<List<PCNCODE>> getPCNCode() async {
+    var _token = await storage.read(key: 'token_access');
+    var headers = {
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer ' + _token.toString(),
+    };
+    var data = {};
+    Uri uri = Uri.parse(baseURL + 'pcn/code/');
+    var res = await http.get(uri, headers: headers);
+
+    print(res.body);
+    var respData = json.decode(utf8.decode(res.bodyBytes));
+    dynamic datas = respData;
+
+    List<dynamic> responseData = respData['data'];
+    List<PCNCODE> productInfo = responseData
+        .map((e) => PCNCODE.fromMap(e))
+        .where((element) => element != null)
+        .toList();
+    print(productInfo);
+    return Future.value(productInfo);
+  }
 }
