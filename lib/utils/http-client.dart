@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:carplate/models/pcnCode.dart';
 import 'package:carplate/models/pcnSummary.dart';
@@ -111,5 +112,50 @@ class HttpClients extends ChangeNotifier {
         .toList();
     print(productInfo);
     return Future.value(productInfo);
+  }
+
+  Future<dynamic> savePCN(
+    String numberPlate,
+    String carModel,
+    String carColor,
+    String carLocation,
+    String pcnCode,
+    String reason,
+    File imageFile,
+  ) async {
+    var _token = await storage.read(key: 'token_access');
+    var headers = {
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer ' + _token.toString(),
+    };
+    var data = {};
+
+    Uri uri = Uri.parse(baseURL + 'pcn/save/');
+    var request = await http.MultipartRequest(
+      'POST',
+      uri,
+    );
+    request.fields.addAll({
+      'number_plate': 'A1001',
+      'car_model': 'BMW',
+      'car_color': 'Red',
+      'car_location': 'Mumbai',
+      'pcn_code': 'test',
+      'reason': 'Hello'
+    });
+    request.files
+        .add(await http.MultipartFile.fromPath('car_image', '/path/to/file'));
+    request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send();
+    // var respData = json.decode(utf8.decode(response.stream.bytesToString()));
+    // dynamic datas = respData;
+
+    // List<dynamic> responseData = respData['data'];
+    // List<PCNCODE> productInfo = responseData
+    //     .map((e) => PCNCODE.fromMap(e))
+    //     .where((element) => element != null)
+    //     .toList();
+    // print(productInfo);
+    return Future.value();
   }
 }
