@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
+import 'dart:io';
 
 import 'package:carplate/models/pcnCode.dart';
 import 'package:carplate/models/pcnSummary.dart';
@@ -114,15 +114,15 @@ class HttpClients extends ChangeNotifier {
     return Future.value(productInfo);
   }
 
-  Future<dynamic> savePCN(
-    String numberPlate,
-    String carModel,
-    String carColor,
-    String carLocation,
-    String pcnCode,
-    String reason,
-    File imageFile,
-  ) async {
+  Future<dynamic> savePCN({
+    required String numberPlate,
+    required String carModel,
+    required String carColor,
+    required String carLocation,
+    required String pcnCode,
+    required String reason,
+    File? imageFile,
+  }) async {
     var _token = await storage.read(key: 'token_access');
     var headers = {
       'Content-type': 'application/json',
@@ -136,15 +136,20 @@ class HttpClients extends ChangeNotifier {
       uri,
     );
     request.fields.addAll({
-      'number_plate': 'A1001',
-      'car_model': 'BMW',
-      'car_color': 'Red',
-      'car_location': 'Mumbai',
-      'pcn_code': 'test',
-      'reason': 'Hello'
+      'number_plate': numberPlate,
+      'car_model': carModel,
+      'car_color': carColor,
+      'car_location': carLocation,
+      'pcn_code': pcnCode,
+      'reason': reason,
     });
-    request.files
-        .add(await http.MultipartFile.fromPath('car_image', '/path/to/file'));
+    print(request);
+    if (imageFile == null) {
+    } else {
+      request.files
+          .add(await http.MultipartFile.fromPath('car_image', imageFile.path));
+    }
+
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     // var respData = json.decode(utf8.decode(response.stream.bytesToString()));
@@ -156,6 +161,13 @@ class HttpClients extends ChangeNotifier {
     //     .where((element) => element != null)
     //     .toList();
     // print(productInfo);
-    return Future.value();
+    var resData;
+    var res;
+    await response.stream.listen((value) {
+      var dec = AsciiDecoder();
+      res = json.decode(dec.convert(value));
+      resData = res;
+    });
+    return Future.value(res);
   }
 }

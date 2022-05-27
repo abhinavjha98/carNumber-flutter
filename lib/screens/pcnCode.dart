@@ -26,6 +26,9 @@ class _PCNCodeState extends State<PCNCode> {
   List<DropdownMenuItem<String>> pcnScheme = [];
   FocusNode pcnFocus = new FocusNode();
   bool _isLoading = false;
+  FocusNode reasonNode = new FocusNode();
+  TextEditingController reasonController = new TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -73,6 +76,18 @@ class _PCNCodeState extends State<PCNCode> {
     setState(() {
       _chosenValue = value;
     });
+  }
+
+  void saveData() async {
+    dynamic data = await HttpClients().savePCN(
+      numberPlate: widget.numberPlate,
+      carModel: widget.carModel,
+      carColor: widget.carColor,
+      carLocation: widget.carLocation,
+      pcnCode: _chosenValue.toString(),
+      reason: reasonController.text,
+    );
+    print(data);
   }
 
   @override
@@ -157,7 +172,9 @@ class _PCNCodeState extends State<PCNCode> {
                     Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      child: const TextField(
+                      child: TextFormField(
+                        focusNode: reasonNode,
+                        controller: reasonController,
                         maxLines: 8,
                         decoration: InputDecoration(
                             labelText: "Reason/Description",
@@ -203,11 +220,12 @@ class _PCNCodeState extends State<PCNCode> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Summary()),
-                            );
+                            saveData();
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => Summary()),
+                            // );
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 10),
